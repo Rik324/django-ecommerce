@@ -18,6 +18,24 @@
 
 <body>
 
+  <div class="top-bar">
+    <div class="container">
+      <div class="row d-flex align-items-center">
+        <div class="col-md-7 d-none d-md-block">
+          <a href="mailto:info@pinvengan.com" class="mr-3"><i class="fas fa-envelope mr-1"></i> info@pinvengan.com</a>
+          <a href="tel:+6601234567"><i class="fas fa-phone mr-1"></i> +66 012 345 67</a>
+        </div>
+        <div class="col-md-5">
+          <div class="d-flex justify-content-end">
+            <a href="#" class="px-2"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="px-2"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="px-2"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="px-2"><i class="fab fa-linkedin-in"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   {% include "navbar.html" %}
 
   {% block content %}
@@ -27,6 +45,7 @@
   {% endblock %}
 
   {% include "footer.html" %}
+
   {% include "scripts.html" %}
 
   {% block extra_scripts %}
