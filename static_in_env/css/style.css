@@ -1,29 +1,23 @@
-/* Required height of parents of the Half Page Carousel for proper displaying carousel itself */
-html,
-body,
-.view {
-  height: 100%;
+/* Import the "Poppins" font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;800&display=swap');
+
+/* Apply the font to the whole site and set a base weight */
+body {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+  /* Use regular weight for body text */
 }
 
-/* Half Page Carousel itself*/
-.carousel {
-  height: 50%;
-}
-
-.carousel .carousel-inner {
-  height: 100%;
-}
-
-.carousel .carousel-inner .carousel-item,
-.carousel .carousel-inner .active {
-  height: 100%;
-}
-
-/* Adjustment for mobile devices*/
-@media (max-width: 776px) {
-  .carousel {
-    height: 100%;
-  }
+/* Ensure headings use a bold weight */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-weight-bold {
+  font-weight: 700;
+  /* Use bold weight for all headings */
 }
 
 /* Footer color for sake of consistency with Navbar */
@@ -32,7 +26,7 @@ body,
 }
 
 /* ==============================================
-CUSTOM STYLES FOR PINVEGAN THEME
+CUSTOM THEME STYLES
 ==============================================
 */
 
@@ -44,21 +38,30 @@ CUSTOM STYLES FOR PINVEGAN THEME
 
 .navbar .nav-link {
   color: #333 !important;
-  /* Darker links */
+  font-weight: 400;
 }
 
-/* 2. Custom Primary Button Color (Green) */
+/* Fix for centered navbar links */
+.navbar-nav.mx-auto {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.navbar-nav.nav-flex-icons {
+  margin-left: auto;
+}
+
+/* 2. Custom Button Color (Green) */
 .btn-primary,
 .btn-success {
   background-color: #4CAF50 !important;
-  /* Your desired green color */
   border-color: #4CAF50 !important;
 }
 
 .btn-primary:hover,
 .btn-success:hover {
   background-color: #45a049 !important;
-  /* A slightly darker green for hover */
 }
 
 /* 3. Custom Text Color */
@@ -67,10 +70,9 @@ CUSTOM STYLES FOR PINVEGAN THEME
   color: #4CAF50 !important;
 }
 
-/* 4. Card styling for a cleaner look */
+/* 4. Card styling */
 .card {
   border: 1px solid #eee;
-  /* Light border instead of heavy shadow */
   box-shadow: none;
   transition: box-shadow 0.3s ease-in-out;
 }
@@ -81,5 +83,32 @@ CUSTOM STYLES FOR PINVEGAN THEME
 
 .card-title {
   font-size: 1rem;
-  /* Adjust font size for product titles */
+}
+
+/* ==============================================
+HOMEPAGE SPECIFIC STYLES
+==============================================
+*/
+
+/* Hero Section Styles */
+.view {
+  height: 80vh;
+}
+
+/* Make Hero Text Bolder and More Readable */
+.view .h1-responsive {
+  font-weight: 800 !important;
+  /* Use extra-bold weight */
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+  /* Add shadow for readability */
+}
+
+.view .h6 {
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 740px) {
+  .view {
+    height: 100vh;
+  }
 }
