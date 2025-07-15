@@ -2,22 +2,84 @@
 html,
 body,
 .view {
-  height: 100%; }
+  height: 100%;
+}
 
 /* Half Page Carousel itself*/
 .carousel {
-  height: 50%; }
-  .carousel .carousel-inner {
-    height: 100%; }
-    .carousel .carousel-inner .carousel-item,
-    .carousel .carousel-inner .active {
-      height: 100%; }
+  height: 50%;
+}
+
+.carousel .carousel-inner {
+  height: 100%;
+}
+
+.carousel .carousel-inner .carousel-item,
+.carousel .carousel-inner .active {
+  height: 100%;
+}
 
 /* Adjustment for mobile devices*/
 @media (max-width: 776px) {
   .carousel {
-    height: 100%; } }
+    height: 100%;
+  }
+}
 
 /* Footer color for sake of consistency with Navbar */
 .page-footer {
-  background-color: #929FBA; }
+  background-color: #929FBA;
+}
+
+/* ==============================================
+CUSTOM STYLES FOR PINVEGAN THEME
+==============================================
+*/
+
+/* 1. Navbar customization */
+.navbar {
+  background-color: #ffffff !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar .nav-link {
+  color: #333 !important;
+  /* Darker links */
+}
+
+/* 2. Custom Primary Button Color (Green) */
+.btn-primary,
+.btn-success {
+  background-color: #4CAF50 !important;
+  /* Your desired green color */
+  border-color: #4CAF50 !important;
+}
+
+.btn-primary:hover,
+.btn-success:hover {
+  background-color: #45a049 !important;
+  /* A slightly darker green for hover */
+}
+
+/* 3. Custom Text Color */
+.text-primary,
+.green-text {
+  color: #4CAF50 !important;
+}
+
+/* 4. Card styling for a cleaner look */
+.card {
+  border: 1px solid #eee;
+  /* Light border instead of heavy shadow */
+  box-shadow: none;
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.card:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+  font-size: 1rem;
+  /* Adjust font size for product titles */
+}
