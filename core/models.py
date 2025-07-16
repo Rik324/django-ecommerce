@@ -6,16 +6,19 @@ from django.shortcuts import reverse
 from django_countries.fields import CountryField
 
 
+# UPDATED CATEGORIES
 CATEGORY_CHOICES = (
-    ('S', 'Shirt'),
-    ('SW', 'Sport wear'),
-    ('OW', 'Outwear')
+    ('F', 'Fruits'),
+    ('V', 'Vegetables'),
+    ('TR', 'Thai Rice'),
+    ('TH', 'Thai Herbs')
 )
 
+# UPDATED LABELS
 LABEL_CHOICES = (
-    ('P', 'primary'),
-    ('S', 'secondary'),
-    ('D', 'danger')
+    ('N', 'New'),
+    ('B', 'Best Seller'),
+    ('S', 'On Sale')
 )
 
 ADDRESS_CHOICES = (
@@ -39,7 +42,7 @@ class Item(models.Model):
     price = models.FloatField()
     discount_price = models.FloatField(blank=True, null=True)
     category = models.CharField(choices=CATEGORY_CHOICES, max_length=2)
-    label = models.CharField(choices=LABEL_CHOICES, max_length=1)
+    label = models.CharField(choices=LABEL_CHOICES, max_length=2) # Adjusted max_length to 2 for consistency
     slug = models.SlugField()
     description = models.TextField()
     image = models.ImageField()
