@@ -75,3 +75,52 @@ admin.site.register(Coupon)
 admin.site.register(Refund)
 admin.site.register(Address, AddressAdmin)
 admin.site.register(UserProfile)
+from django.contrib import admin
+from .models import (
+    # ... your other models might be registered here ...
+    QuotationRequest,
+    QuotationRequestItem
+)
+
+class QuotationRequestItemInline(admin.TabularInline):
+    """
+    This allows you to see and edit the items directly within
+    the Quotation Request page in the admin panel.
+    """
+    model = QuotationRequestItem
+    extra = 0 # Don't show any extra empty forms by default
+
+
+class QuotationRequestAdmin(admin.ModelAdmin):
+    """
+    This customizes how the list of quotation requests is displayed.
+    """
+    # This shows the items right on the quotation request page.
+    inlines = [QuotationRequestItemInline]
+
+    # These are the fields you will see in the list of all quotes.
+    list_display = (
+        'id',
+        'user',
+        'status',
+        'created_at',
+        'proposed_total'
+    )
+
+    # This adds a filter sidebar to filter by status.
+    list_filter = ('status',)
+
+    # This adds a search bar to search by user's username.
+    search_fields = ('user__username',)
+
+    # This makes these fields clickable links in the admin list.
+    list_display_links = ('id', 'user')
+
+    # You can't edit these fields directly in the list view.
+    list_editable = ('status', 'proposed_total')
+
+
+# Register your models with the admin site
+admin.site.register(QuotationRequest, QuotationRequestAdmin)
+# We don't need a separate admin page for QuotationRequestItem,
+# as it's handled by the inline view above.
