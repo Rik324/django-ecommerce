@@ -185,3 +185,54 @@ class AccountView(LoginRequiredMixin, TemplateView):
             context['default_billing_address'] = None
             
         return context
+    # ... all of your other views are above this ...
+
+
+# ===================================================================
+# == ✅ ADD THIS VIEW TO THE END OF YOUR FILE
+# ===================================================================
+
+class AcceptQuoteView(LoginRequiredMixin, View):
+    """
+    Handles the logic for when a user accepts a price quote.
+    """
+    def get(self, request, *args, **kwargs):
+        quote_id = self.kwargs.get('quote_id')
+        
+        # Find the specific quote, ensuring it belongs to the current user
+        # and is in the 'ANSWERED' state. This is a security measure.
+        quote = get_object_or_404(
+            QuotationRequest, 
+            id=quote_id, 
+            user=self.request.user, 
+            status='ANSWERED'
+        )
+
+        # 1. Create a new Order based on the accepted quote
+        new_order = Order.objects.create(
+            user=self.request.user,
+            ordered_date=timezone.now()
+        )
+
+        # 2. Copy each item from the quote to the new order
+        order_items = []
+        for quote_item in quote.items.all():
+            order_item = OrderItem.objects.create(
+                item=quote_item.item,
+                user=self.request.user,
+                quantity=quote_item.quantity
+            )
+            order_items.append(order_item)
+        
+        # Add all the newly created OrderItems to the Order
+        new_order.items.add(*order_items)
+        new_order.save()
+
+        # 3. Update the quote's status to 'ACCEPTED' and link it to the new order
+        quote.status = 'ACCEPTED'
+        quote.order = new_order
+        quote.save()
+        
+        # 4. Show a success message and redirect the user to their order summary (cart)
+        messages.success(self.request, "Quote accepted! The items have been added to a new order in your cart.")
+        return redirect("core:order-summary")

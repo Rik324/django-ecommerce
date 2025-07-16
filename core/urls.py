@@ -13,7 +13,8 @@ from .views import (
     RequestQuoteView,
     MyQuotesView,
     CategoryView,
-    AccountView  # 👈 1. Import the new view
+    AccountView,
+    AcceptQuoteView  # 👈 1. Import the new view
 )
 
 app_name = 'core'
@@ -33,7 +34,8 @@ urlpatterns = [
     path('request-quote/<slug>/', RequestQuoteView.as_view(), name='request-quote'),
     path('my-quotes/', MyQuotesView.as_view(), name='my-quotes'),
     path('category/<slug:category_slug>/', CategoryView.as_view(), name='category_view'),
-
-    # 👇 2. Add this new URL for the account page
     path('my-account/', AccountView.as_view(), name='my-account'),
+
+    # 👇 2. Add this new URL for accepting a quote
+    path('accept-quote/<int:quote_id>/', AcceptQuoteView.as_view(), name='accept-quote'),
 ]

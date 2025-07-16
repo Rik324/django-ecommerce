@@ -45,3 +45,9 @@ DATABASES = {
 
 STRIPE_PUBLIC_KEY = config('STRIPE_TEST_PUBLIC_KEY')
 STRIPE_SECRET_KEY = config('STRIPE_TEST_SECRET_KEY')
+# djecommerce/settings/development.py
+
+# ... all your other settings are here ...
+
+# 👇 ADD THIS LINE AT THE END OF THE FILE
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

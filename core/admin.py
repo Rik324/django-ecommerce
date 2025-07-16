@@ -1,12 +1,21 @@
 from django.contrib import admin
+from .models import (
+    Item, 
+    OrderItem, 
+    Order, 
+    Payment, 
+    Coupon, 
+    Refund, 
+    Address, 
+    UserProfile,
+    Post,
+    QuotationRequest,
+    QuotationRequestItem
+)
 
-from .models import Item, OrderItem, Order, Payment, Coupon, Refund, Address, UserProfile
-
-
+# This is a custom action for the Order model in the admin panel.
 def make_refund_accepted(modeladmin, request, queryset):
     queryset.update(refund_requested=False, refund_granted=True)
-
-
 make_refund_accepted.short_description = 'Update order to refund granted'
 
 
@@ -16,28 +25,15 @@ class OrderAdmin(admin.ModelAdmin):
                     'being_delivered',
                     'received',
                     'refund_requested',
-                    'refund_granted',
-                    'shipping_address',
-                    'billing_address',
-                    'payment',
-                    'coupon'
+                    'refund_granted'
                     ]
-    list_display_links = [
-        'user',
-        'shipping_address',
-        'billing_address',
-        'payment',
-        'coupon'
-    ]
+    list_display_links = ['user']
     list_filter = ['ordered',
                    'being_delivered',
                    'received',
                    'refund_requested',
                    'refund_granted']
-    search_fields = [
-        'user__username',
-        'ref_code'
-    ]
+    search_fields = ['user__username', 'ref_code']
     actions = [make_refund_accepted]
 
 
@@ -55,7 +51,7 @@ class AddressAdmin(admin.ModelAdmin):
     search_fields = ['user__username', 'street_address', 'apartment_address', 'zip']
 
 
-class ItemAdmin(admin.ModelAdmin): # Add or modify this class
+class ItemAdmin(admin.ModelAdmin):
     list_display = [
         'title',
         'price',
@@ -63,64 +59,44 @@ class ItemAdmin(admin.ModelAdmin): # Add or modify this class
         'category',
         'label',
     ]
-    list_filter = ['category', 'label'] # Add new fields to filter
+    list_filter = ['category', 'label']
     search_fields = ['title', 'description']
 
 
-admin.site.register(Item, ItemAdmin)
-admin.site.register(OrderItem)
-admin.site.register(Order, OrderAdmin)
-admin.site.register(Payment)
-admin.site.register(Coupon)
-admin.site.register(Refund)
-admin.site.register(Address, AddressAdmin)
-admin.site.register(UserProfile)
-from django.contrib import admin
-from .models import (
-    # ... your other models might be registered here ...
-    QuotationRequest,
-    QuotationRequestItem
-)
-
 class QuotationRequestItemInline(admin.TabularInline):
-    """
-    This allows you to see and edit the items directly within
-    the Quotation Request page in the admin panel.
-    """
+    """Allows you to see items within a quote request."""
     model = QuotationRequestItem
-    extra = 0 # Don't show any extra empty forms by default
+    extra = 0
 
 
 class QuotationRequestAdmin(admin.ModelAdmin):
-    """
-    This customizes how the list of quotation requests is displayed.
-    """
-    # This shows the items right on the quotation request page.
+    """Customizes the admin for Quotation Requests."""
     inlines = [QuotationRequestItemInline]
-
-    # These are the fields you will see in the list of all quotes.
-    list_display = (
-        'id',
-        'user',
-        'status',
-        'created_at',
-        'proposed_total'
-    )
-
-    # This adds a filter sidebar to filter by status.
+    list_display = ('id', 'user', 'status', 'created_at', 'proposed_total')
     list_filter = ('status',)
-
-    # This adds a search bar to search by user's username.
     search_fields = ('user__username',)
-
-    # This makes these fields clickable links in the admin list.
     list_display_links = ('id', 'user')
-
-    # You can't edit these fields directly in the list view.
     list_editable = ('status', 'proposed_total')
 
 
-# Register your models with the admin site
+class PostAdmin(admin.ModelAdmin):
+    """Customizes the admin for Blog Posts."""
+    list_display = ('title', 'slug', 'status', 'created_at')
+    list_filter = ("status",)
+    search_fields = ['title', 'content']
+    prepopulated_fields = {'slug': ('title',)}
+
+
+# Register all your models with the admin site
+admin.site.register(Item, ItemAdmin)
+admin.site.register(Order, OrderAdmin)
+admin.site.register(Address, AddressAdmin)
 admin.site.register(QuotationRequest, QuotationRequestAdmin)
-# We don't need a separate admin page for QuotationRequestItem,
-# as it's handled by the inline view above.
+admin.site.register(Post, PostAdmin)
+
+# These models don't need special admin classes, so we register them simply
+admin.site.register(OrderItem)
+admin.site.register(Payment)
+admin.site.register(Coupon)
+admin.site.register(Refund)
+admin.site.register(UserProfile)

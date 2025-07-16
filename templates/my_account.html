@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main>
+    <div class="container">
+        <h2 class="my-4">My Account</h2>
+        <p>Welcome, {{ user.username }}!</p>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        Default Shipping Address
+                    </div>
+                    <div class="card-body">
+                        {% if default_shipping_address %}
+                        <p>
+                            {{ default_shipping_address.street_address }}, {{ default_shipping_address.apartment_address
+                            }}<br>
+                            {{ default_shipping_address.zip }}, {{ default_shipping_address.country.name }}
+                        </p>
+                        <a href="#" class="btn btn-sm btn-primary">Edit Address</a>
+                        {% else %}
+                        <p>You have not set a default shipping address.</p>
+                        <a href="#" class="btn btn-sm btn-secondary">Add Address</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        Default Billing Address
+                    </div>
+                    <div class="card-body">
+                        {% if default_billing_address %}
+                        <p>
+                            {{ default_billing_address.street_address }}, {{ default_billing_address.apartment_address
+                            }}<br>
+                            {{ default_billing_address.zip }}, {{ default_billing_address.country.name }}
+                        </p>
+                        <a href="#" class="btn btn-sm btn-primary">Edit Address</a>
+                        {% else %}
+                        <p>You have not set a default billing address.</p>
+                        <a href="#" class="btn btn-sm btn-secondary">Add Address</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <a href="{% url 'core:my-quotes' %}" class="btn btn-info">View My Quotation Requests</a>
+
+    </div>
+</main>
+{% endblock content %}
