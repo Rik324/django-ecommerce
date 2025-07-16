@@ -11,7 +11,9 @@ from .views import (
     AddCouponView,
     RequestRefundView,
     RequestQuoteView,
-    MyQuotesView  # 👈 1. Import the new view
+    MyQuotesView,
+    CategoryView,
+    AccountView  # 👈 1. Import the new view
 )
 
 app_name = 'core'
@@ -29,7 +31,9 @@ urlpatterns = [
     path('payment/<payment_option>/', PaymentView.as_view(), name='payment'),
     path('request-refund/', RequestRefundView.as_view(), name='request-refund'),
     path('request-quote/<slug>/', RequestQuoteView.as_view(), name='request-quote'),
-
-    # 👇 2. Add this new URL for the "My Quotes" page
     path('my-quotes/', MyQuotesView.as_view(), name='my-quotes'),
+    path('category/<slug:category_slug>/', CategoryView.as_view(), name='category_view'),
+
+    # 👇 2. Add this new URL for the account page
+    path('my-account/', AccountView.as_view(), name='my-account'),
 ]

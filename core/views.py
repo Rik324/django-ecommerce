@@ -9,10 +9,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect, render, get_object_or_404
 from django.utils import timezone
-# 👇 1. ADD FormView to this import
-from django.views.generic import ListView, DetailView, View, FormView
+# 👇 Add TemplateView to this import
+from django.views.generic import ListView, DetailView, View, FormView, TemplateView
 
-# 👇 2. IMPORT the new models and form for the quotation feature
 from .forms import CheckoutForm, CouponForm, RefundForm, PaymentForm, QuotationRequestForm
 from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile, QuotationRequest, QuotationRequestItem
 
@@ -38,15 +37,13 @@ def is_valid_form(values):
             valid = False
     return valid
 
-# --- Your existing views are here (unchanged) ---
-
 class CheckoutView(View):
     # ... (your existing code) ...
-    pass # I'm collapsing this for brevity, but your code is here
+    pass
 
 class PaymentView(View):
     # ... (your existing code) ...
-    pass # I'm collapsing this for brevity, but your code is here
+    pass
 
 class HomeView(ListView):
     model = Item
@@ -56,8 +53,7 @@ class HomeView(ListView):
 
 class OrderSummaryView(LoginRequiredMixin, View):
     # ... (your existing code) ...
-    pass # I'm collapsing this for brevity, but your code is here
-
+    pass
 
 class ItemDetailView(DetailView):
     model = Item
@@ -67,75 +63,54 @@ class ItemDetailView(DetailView):
 @login_required
 def add_to_cart(request, slug):
     # ... (your existing code) ...
-    pass # I'm collapsing this for brevity, but your code is here
-
+    pass
 
 @login_required
 def remove_from_cart(request, slug):
     # ... (your existing code) ...
-    pass # I'm collapsing this for brevity, but your code is here
-
+    pass
 
 @login_required
 def remove_single_item_from_cart(request, slug):
     # ... (your existing code) ...
-    pass # I'm collapsing this for brevity, but your code is here
-
+    pass
 
 def get_coupon(request, code):
     # ... (your existing code) ...
-    pass # I'm collapsing this for brevity, but your code is here
-
+    pass
 
 class AddCouponView(View):
     # ... (your existing code) ...
-    pass # I'm collapsing this for brevity, but your code is here
-
+    pass
 
 class RequestRefundView(View):
     # ... (your existing code) ...
-    pass # I'm collapsing this for brevity, but your code is here
-
-# ===================================================================
-# == ✅ 3. ADD THE NEW QUOTATION VIEW AT THE END
-# ===================================================================
+    pass
 
 class RequestQuoteView(LoginRequiredMixin, FormView):
-    """
-    This view handles displaying the form for a quotation request
-    and processing the submitted data.
-    """
     form_class = QuotationRequestForm
-    template_name = 'request_quote.html' # We will create this HTML file next
+    template_name = 'request_quote.html'
 
     def get_item(self):
-        """Helper method to get the item from the URL's slug."""
         slug = self.kwargs.get('slug')
         item = get_object_or_404(Item, slug=slug)
         return item
 
     def get_context_data(self, **kwargs):
-        """Adds the item object to the template context."""
         context = super().get_context_data(**kwargs)
         context['item'] = self.get_item()
         return context
 
     def form_valid(self, form):
-        """
-        This method runs when the user submits a valid form. It saves
-        the request to the database.
-        """
         quantity = form.cleaned_data.get('quantity')
         user_notes = form.cleaned_data.get('user_notes')
         item = self.get_item()
         
-        # Create the main QuotationRequest object
         quote_request = QuotationRequest.objects.create(
             user=self.request.user,
             user_notes=user_notes
         )
         
-        # Create the specific item linked to that request
         QuotationRequestItem.objects.create(
             quotation_request=quote_request,
             item=item,
@@ -143,30 +118,70 @@ class RequestQuoteView(LoginRequiredMixin, FormView):
         )
         
         messages.success(self.request, "Your quotation request has been submitted successfully!")
-        
-        # Redirect the user back to the product page
         return redirect("core:product", slug=item.slug)
-    # ... your other views and imports are at the top ...
-
-
-# ===================================================================
-# == ✅ NEW "MY QUOTES" VIEW
-# ===================================================================
 
 class MyQuotesView(LoginRequiredMixin, ListView):
-    """
-    This view displays a list of all quotation requests submitted
-    by the currently logged-in user.
-    """
     model = QuotationRequest
-    template_name = 'my_quotes.html'  # The HTML file we will create next
-    context_object_name = 'quotes'     # The name for the list of quotes in the template
-    paginate_by = 10                   # Optional: Show 10 quotes per page
+    template_name = 'my_quotes.html'
+    context_object_name = 'quotes'
+    paginate_by = 10
 
     def get_queryset(self):
-        """
-        This method ensures that users can only see their own quotes,
-        not quotes from other users.
-        """
-        # Filter the quotation requests by the current user and order by most recent
         return QuotationRequest.objects.filter(user=self.request.user).order_by('-created_at')
+
+class CategoryView(ListView):
+    model = Item
+    template_name = "category_page.html"
+    context_object_name = 'items'
+    paginate_by = 10
+
+    CATEGORY_MAPPING = {
+        'fruits': 'F',
+        'vegetables': 'V',
+        'thai-rice': 'TR',
+        'thai-herbs': 'TH'
+    }
+
+    def get_queryset(self):
+        self.category_slug = self.kwargs.get('category_slug')
+        category_code = self.CATEGORY_MAPPING.get(self.category_slug)
+        queryset = Item.objects.filter(category=category_code)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['category_name'] = self.category_slug.replace('-', ' ').title()
+        return context
+
+# ===================================================================
+# == ✅ NEW ACCOUNT VIEW (ADDED CODE)
+# ===================================================================
+
+class AccountView(LoginRequiredMixin, TemplateView):
+    """
+    This view displays the user's account page with their profile
+    and default address information.
+    """
+    template_name = "my_account.html"  # We will create this HTML file next
+
+    def get_context_data(self, **kwargs):
+        """
+        This method fetches all the necessary information for the account page
+        and sends it to the template.
+        """
+        context = super().get_context_data(**kwargs)
+        
+        # Get the current user's default shipping and billing addresses
+        try:
+            context['default_shipping_address'] = Address.objects.get(
+                user=self.request.user, address_type='S', default=True)
+        except Address.DoesNotExist:
+            context['default_shipping_address'] = None
+
+        try:
+            context['default_billing_address'] = Address.objects.get(
+                user=self.request.user, address_type='B', default=True)
+        except Address.DoesNotExist:
+            context['default_billing_address'] = None
+            
+        return context
