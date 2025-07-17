@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main>
+    <div class="container my-5">
+
+        <div class="text-center mb-5">
+            {% if query %}
+            <h2 class="category-page-title">Results for: "{{ query }}"</h2>
+            {% else %}
+            <h2 class="category-page-title">Please enter a search term</h2>
+            {% endif %}
+        </div>
+        <section>
+            <div class="row">
+                {% for item in items %}
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card h-100 product-card">
+                        <div class="view overlay">
+                            <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.title }}">
+                            <a href="{% url 'core:product' slug=item.slug %}">
+                                <div class="mask rgba-white-slight"></div>
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            <h4 class="card-title mb-1">{{ item.title }}</h4>
+                            <hr class="my-2">
+                            <p class="product-category mb-0">{{ item.get_category_display|upper }}</p>
+                            <p class="product-name mb-2">{{ item.title }}</p>
+                            <a href="{% url 'core:request-quote' slug=item.slug %}" class="btn btn-info btn-sm">Request
+                                a Quote</a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col">
+                    <p>No results found for your search.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+</main>
+{% endblock content %}

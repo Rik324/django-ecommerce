@@ -14,7 +14,7 @@ from django.views.generic import ListView, DetailView, View, FormView, TemplateV
 
 from .forms import CheckoutForm, CouponForm, RefundForm, PaymentForm, QuotationRequestForm
 from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile, QuotationRequest, QuotationRequestItem
-
+from django.db.models import Q
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -236,3 +236,41 @@ class AcceptQuoteView(LoginRequiredMixin, View):
         # 4. Show a success message and redirect the user to their order summary (cart)
         messages.success(self.request, "Quote accepted! The items have been added to a new order in your cart.")
         return redirect("core:order-summary")
+    
+    # ===================================================================
+# == ✅ NEW SEARCH RESULTS VIEW
+# ===================================================================
+
+class SearchResultsView(ListView):
+    """
+    Displays a list of items that match the search query.
+    """
+    model = Item
+    template_name = 'search_results.html' # The HTML file we will create next
+    context_object_name = 'items'
+
+    def get_queryset(self):
+        """
+        This method filters the items based on the search query
+        provided in the URL (e.g., /search/?q=mango).
+        """
+        # Get the search query from the URL's 'q' parameter
+        query = self.request.GET.get('q', '')
+        if query:
+            # Use a Q object to search in both the title and description fields.
+            # The '__icontains' makes the search case-insensitive.
+            object_list = self.model.objects.filter(
+                Q(title__icontains=query) | Q(description__icontains=query)
+            )
+        else:
+            object_list = self.model.objects.none() # Return no results if no query
+        return object_list
+
+    def get_context_data(self, **kwargs):
+        """
+        This method adds the original search query to the template
+        so we can display it on the page.
+        """
+        context = super().get_context_data(**kwargs)
+        context['query'] = self.request.GET.get('q', '')
+        return context
